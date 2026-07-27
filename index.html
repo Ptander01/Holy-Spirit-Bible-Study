@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bible Study Library</title>
+<script>
+/* Apply stored theme before first paint to avoid a flash of the wrong theme. */
+(function () {
+  try {
+    /* Defaults to dark, matching the sister apps; only an explicit choice switches it. */
+    if (localStorage.getItem('bsl-theme') === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  } catch (e) {}
+})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&family=Cinzel:wght@400;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <style>
 
@@ -26,6 +37,115 @@
   --font-body:    'Lora', Georgia, serif;
   --font-display: 'Cinzel', serif;
   --font-serif:   'Cormorant Garamond', Georgia, serif;
+
+  /* ── Glass ── */
+  --glass-bg:     rgba(13, 16, 32, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-shine:  rgba(255, 255, 255, 0.06);
+  --glass-blur:   blur(18px);
+  /* Cards repeat 50+ times — they get the glass *look* (translucency + rim +
+     lip shadow) but no backdrop-filter, which is far too costly to composite
+     at that count. Reserve --glass-blur for the few large panels. */
+  --card-bg:      rgba(21, 26, 46, 0.72);
+
+  /*
+   * 3D "lip" system — soft neumorphic depth used on every pill/card.
+   * --lip-out    : resting/lifted surface
+   * --lip-hover  : transitional (more lift + accent rim glow)
+   * --lip-in     : pressed/active (deep inset track)
+   * --lip-in-gold: pressed + gold rim, for the "selected" state
+   */
+  --lip-out:
+    0 6px 18px rgba(0,0,0,0.65),
+    0 2px 5px  rgba(0,0,0,0.45),
+    inset 0  1px 0 rgba(255,255,255,0.09),
+    inset 0 -1px 0 rgba(0,0,0,0.50),
+    inset 0  0   0 1px rgba(255,255,255,0.04);
+  --lip-hover:
+    0 8px 22px rgba(0,0,0,0.70),
+    0 3px 7px  rgba(0,0,0,0.50),
+    inset 0  1px 0 rgba(255,255,255,0.13),
+    inset 0 -1px 0 rgba(0,0,0,0.55),
+    inset 0  0   0 1px rgba(255,255,255,0.07),
+    0 0 14px rgba(201,168,76,0.12);
+  --lip-in:
+    inset 0  4px 14px rgba(0,0,0,0.90),
+    inset 0  2px  5px rgba(0,0,0,0.65),
+    inset 0 -1px  3px rgba(255,255,255,0.025),
+    inset 0  0    0 1px rgba(255,255,255,0.03);
+  --lip-in-gold:
+    inset 0  4px 14px rgba(0,0,0,0.90),
+    inset 0  2px  5px rgba(0,0,0,0.65),
+    inset 0 -1px  3px rgba(255,255,255,0.025),
+    inset 0  0    0 1px rgba(201,168,76,0.25),
+    0 0 18px rgba(201,168,76,0.20);
+
+  --pill-bg:        linear-gradient(160deg, #1c2138 0%, #141a2c 55%, #0f1422 100%);
+  --pill-bg-active: linear-gradient(160deg, #0a0c16 0%, #0e1222 55%, #141930 100%);
+
+  --hero-grad:  linear-gradient(170deg, #101828 0%, #0c0f18 55%);
+  --noise-op:   .5;
+}
+
+/* ── LIGHT / PARCHMENT THEME ─────────────────────────── */
+[data-theme="light"] {
+  --bg:           #f0e4c8;
+  --surface:      #e9dcb6;
+  --surface-2:    #e2d2a6;
+  --surface-3:    #dbc998;
+  --accent:       #7a5218;
+  --accent-dim:   #97723a;
+  --cream:        #2a1808;
+  --cream-dim:    #5a3f24;
+  --muted:        #6f5940;
+  --border:       rgba(130, 85, 28, 0.20);
+  --border-lt:    rgba(130, 85, 28, 0.40);
+  --guide-bg:     #dde8cd;
+  --guide-border: rgba(70, 110, 50, 0.35);
+  --guide-accent: #3f6b32;
+
+  --glass-bg:     rgba(235, 220, 182, 0.80);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-shine:  rgba(255, 255, 255, 0.40);
+  --card-bg:      rgba(236, 223, 189, 0.88);
+
+  /* Warm clay neumorphism — same shadow structure, tuned for a light bg */
+  --lip-out:
+    0 4px 14px rgba(110,70,20,0.20),
+    0 1px 4px  rgba(110,70,20,0.14),
+    inset 0  1px 0 rgba(255,255,255,0.72),
+    inset 0 -1px 0 rgba(110,70,20,0.18),
+    inset 0  0   0 1px rgba(255,255,255,0.28);
+  --lip-hover:
+    0 5px 18px rgba(110,70,20,0.24),
+    0 2px 6px  rgba(110,70,20,0.16),
+    inset 0  1px 0 rgba(255,255,255,0.82),
+    inset 0 -1px 0 rgba(110,70,20,0.22),
+    inset 0  0   0 1px rgba(255,255,255,0.38),
+    0 0 10px rgba(110,70,20,0.08);
+  --lip-in:
+    inset 0  3px 10px rgba(110,70,20,0.20),
+    inset 0  1px  4px rgba(110,70,20,0.14),
+    inset 0 -1px  2px rgba(255,255,255,0.65),
+    inset 0  0    0 1px rgba(255,255,255,0.22);
+  --lip-in-gold:
+    inset 0  3px 10px rgba(110,70,20,0.20),
+    inset 0  1px  4px rgba(110,70,20,0.14),
+    inset 0 -1px  2px rgba(255,255,255,0.65),
+    inset 0  0    0 1px rgba(130,85,28,0.35),
+    0 0 12px rgba(130,85,28,0.14);
+
+  --pill-bg:        linear-gradient(150deg, #ece0c0 0%, #e4d4a8 50%, #dccca0 100%);
+  --pill-bg-active: linear-gradient(150deg, #d8cca0 0%, #e4d4a8 50%, #ece0c0 100%);
+
+  --hero-grad:  linear-gradient(170deg, #f6ecd4 0%, #efe2c4 55%);
+  --noise-op:   .22;
+}
+
+html { color-scheme: dark; }
+[data-theme="light"] { color-scheme: light; }
+body, .lib-hero, .fp-card, .study-card, .toc-toggle, .toc-panel, .lib-stat {
+  transition: background-color .5s ease, background .5s ease, color .5s ease, border-color .5s ease, box-shadow .5s ease;
 }
 
 /* ── RESET & BASE ────────────────────────────────────── */
@@ -47,13 +167,13 @@ body::before {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
   background-size: 150px;
-  opacity: .5;
+  opacity: var(--noise-op);
 }
 
 /* ── HERO ─────────────────────────────────────────────── */
 .lib-hero {
   position: relative; z-index: 10;
-  background: linear-gradient(170deg, #101828 0%, #0c0f18 55%);
+  background: var(--hero-grad);
   border-bottom: 1px solid var(--border);
   padding: 80px 40px 64px;
   text-align: center;
@@ -103,15 +223,19 @@ body::before {
 }
 .lib-stats {
   display: flex; justify-content: center;
-  border: 1px solid var(--border-lt);
-  border-radius: 6px; overflow: hidden;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px; overflow: hidden;
   max-width: 680px; margin: 0 auto;
   position: relative;
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  box-shadow: var(--lip-out);
 }
 .lib-stat {
   flex: 1; padding: 16px 20px; text-align: center;
   border-right: 1px solid var(--border);
-  background: rgba(19,24,42,.6);
+  background: transparent;
 }
 .lib-stat:last-child { border-right: none; }
 .lib-stat-n {
@@ -126,6 +250,157 @@ body::before {
   color: var(--muted);
 }
 
+/* ── THEME TOGGLE (3D capsule) ────────────────────────── */
+.tt-wrap {
+  position: absolute; top: 24px; right: 28px; z-index: 30;
+  perspective: 600px; flex-shrink: 0;
+}
+@media (max-width: 600px) { .tt-wrap { top: 16px; right: 16px; } }
+
+.tt-glow-wide, .tt-glow-mid, .tt-glow-core {
+  position: absolute; pointer-events: none;
+  border-radius: 50%; opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.tt-wrap--light .tt-glow-wide,
+.tt-wrap--light .tt-glow-mid,
+.tt-wrap--light .tt-glow-core { opacity: 1; }
+.tt-glow-wide {
+  inset: -40px -50px;
+  background: radial-gradient(ellipse at 52% 50%, rgba(255,220,160,0.20) 0%, transparent 65%);
+  filter: blur(20px);
+}
+.tt-glow-mid {
+  inset: -18px -22px;
+  background: radial-gradient(ellipse at 52% 52%, rgba(255,228,170,0.30) 0%, transparent 60%);
+  filter: blur(10px);
+}
+.tt-glow-core {
+  inset: -4px -6px;
+  background: radial-gradient(ellipse at 52% 55%, rgba(255,236,190,0.38) 0%, transparent 65%);
+  filter: blur(4px);
+}
+
+.tt {
+  position: relative; display: block;
+  width: 58px; height: 26px;
+  background: none; border: none; padding: 0;
+  cursor: pointer;
+  transform: perspective(600px) rotateX(7deg);
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tt:hover    { transform: perspective(600px) rotateX(4deg) rotateY(-1deg) scale(1.04); }
+.tt--pressed { transform: perspective(600px) rotateX(1deg) scale(0.97) !important; }
+
+.tt-track {
+  position: absolute; inset: 0;
+  border-radius: 13px;
+  background: linear-gradient(150deg, #1e1e24 0%, #131317 40%, #0c0c0f 100%);
+  box-shadow:
+    inset 0 3px 10px rgba(0,0,0,0.85),
+    inset 0 -1px 3px rgba(255,255,255,0.025),
+    0 10px 36px rgba(0,0,0,0.7),
+    0 3px 8px rgba(0,0,0,0.45);
+  transition: background 0.8s ease, box-shadow 0.8s ease;
+}
+.tt--light .tt-track {
+  background: linear-gradient(150deg, #e8dcbf 0%, #ddd0a8 40%, #d0c298 100%);
+  box-shadow:
+    inset 0 2px 8px rgba(110,70,20,0.18),
+    inset 0 -3px 8px rgba(255,248,230,0.70),
+    0 10px 36px rgba(110,70,20,0.10),
+    0 3px 8px rgba(110,70,20,0.06),
+    0 0 60px rgba(255,220,150,0.08);
+}
+
+.tt-recess {
+  position: absolute; inset: 13% 4.5%;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #060608 0%, #0c0c10 50%, #090909 100%);
+  box-shadow: inset 0 4px 16px rgba(0,0,0,0.95), inset 0 -1px 3px rgba(255,255,255,0.01);
+  transition: background 0.8s ease, box-shadow 0.8s ease;
+}
+.tt--light .tt-recess {
+  background: linear-gradient(180deg, #a89060 0%, #b8a070 50%, #c8b080 100%);
+  box-shadow: inset 0 4px 16px rgba(80,50,10,0.30), inset 0 -2px 8px rgba(255,230,170,0.35);
+}
+
+.tt-floor-glow {
+  position: absolute; bottom: 9%; left: 8%; right: 8%; height: 10%;
+  border-radius: 4px; opacity: 0;
+  background: linear-gradient(90deg, transparent 3%, rgba(255,218,140,0.5) 25%, rgba(255,228,170,0.75) 50%, rgba(255,218,140,0.5) 75%, transparent 97%);
+  filter: blur(3px);
+  transition: opacity 0.9s ease;
+}
+.tt--light .tt-floor-glow { opacity: 0.65; }
+
+.tt-rim {
+  position: absolute; inset: 0;
+  border-radius: 13px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+  pointer-events: none;
+  transition: box-shadow 0.8s ease;
+}
+.tt--light .tt-rim { box-shadow: inset 0 0 0 1px rgba(255,245,220,0.30); }
+
+.tt-knob {
+  position: absolute; top: 13%; left: 5%; width: 42%; bottom: 13%;
+  border-radius: 8px;
+  background: linear-gradient(150deg, #303036 0%, #252428 35%, #1b1a1e 100%);
+  box-shadow:
+    0 6px 20px rgba(0,0,0,0.7),
+    0 2px 6px rgba(0,0,0,0.5),
+    inset 0 1px 3px rgba(255,255,255,0.045),
+    inset 0 -2px 4px rgba(0,0,0,0.4);
+  transition:
+    left 0.5s cubic-bezier(0.34, 1.3, 0.64, 1),
+    background 0.8s ease,
+    box-shadow 0.8s ease;
+}
+.tt--light .tt-knob {
+  left: 53%;
+  background: linear-gradient(150deg, #f5eddb 0%, #ede0c4 35%, #e4d4ae 100%);
+  box-shadow:
+    0 6px 22px rgba(110,70,20,0.18),
+    0 2px 7px rgba(110,70,20,0.12),
+    inset 0 3px 6px rgba(255,248,230,0.90),
+    inset 0 -2px 5px rgba(110,70,20,0.08),
+    0 0 30px rgba(255,218,140,0.08);
+}
+.tt--pressed .tt-knob { transform: translateY(1.5px); }
+
+.tt-knob-spec {
+  position: absolute; inset: 0;
+  border-radius: 8px; pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 40%, rgba(0,0,0,0.12) 100%);
+  transition: background 0.8s ease;
+}
+.tt--light .tt-knob-spec {
+  background: linear-gradient(135deg, rgba(255,252,242,0.72) 0%, transparent 40%, rgba(110,70,20,0.02) 100%);
+}
+
+.tt-icon {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transform: scale(0.4) rotate(120deg);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  pointer-events: none;
+}
+.tt-icon--visible { opacity: 1; transform: scale(1) rotate(0deg); }
+.tt-icon svg { width: 11px; height: 11px; display: block; }
+
+.tt-shadow {
+  position: absolute; bottom: -5px; left: 10%; right: 10%; height: 8px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  filter: blur(8px);
+  pointer-events: none; opacity: 0.6;
+  transition: opacity 0.8s ease, background 0.8s ease;
+}
+.tt-wrap--light .tt-shadow { background: rgba(100,65,20,0.12); opacity: 0.5; }
+
 /* ── BROWSE ALL SECTIONS (collapsible TOC) ───────────── */
 .toc-wrap {
   position: relative; z-index: 5;
@@ -135,21 +410,35 @@ body::before {
 @media (max-width: 600px) { .toc-wrap { padding: 0 20px; } }
 .toc-toggle {
   width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
-  background: var(--surface); border: 1px solid var(--border-lt);
-  border-radius: 6px; padding: 14px 20px; margin-top: 28px;
-  cursor: pointer; transition: background .2s, border-color .2s;
+  background: var(--pill-bg); border: 1px solid var(--border-lt);
+  border-radius: 12px; padding: 14px 20px; margin-top: 28px;
+  cursor: pointer;
+  box-shadow: var(--lip-out);
+  transition: background .25s, border-color .18s, color .18s, box-shadow .18s ease;
   font-family: var(--font-display); font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
   color: var(--cream-dim);
 }
-.toc-toggle:hover { background: var(--surface-2); border-color: var(--accent-dim); color: var(--cream); }
+.toc-toggle:hover {
+  border-color: var(--accent-dim); color: var(--cream);
+  box-shadow: var(--lip-hover);
+}
+.toc-toggle.open {
+  background: var(--pill-bg-active);
+  border-color: var(--accent-dim); color: var(--accent);
+  border-radius: 12px 12px 0 0;
+  box-shadow: var(--lip-in-gold);
+}
 .toc-toggle-icon { font-size: 10px; transition: transform .25s; color: var(--accent-dim); }
-.toc-toggle.open .toc-toggle-icon { transform: rotate(180deg); }
+.toc-toggle.open .toc-toggle-icon { transform: rotate(180deg); color: var(--accent); }
 .toc-panel {
   display: none;
-  background: var(--surface); border: 1px solid var(--border-lt); border-top: none;
-  border-radius: 0 0 6px 6px;
+  background: var(--glass-bg); border: 1px solid var(--glass-border); border-top: none;
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border-radius: 0 0 12px 12px;
   padding: 28px 32px 8px;
   margin-bottom: 4px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.35);
 }
 .toc-panel.open { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 28px 32px; }
 @media (max-width: 700px) { .toc-panel.open { grid-template-columns: 1fr 1fr; } }
@@ -216,12 +505,13 @@ body::before {
 }
 .fp-card {
   position: relative; overflow: hidden;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
   padding: 28px 24px 24px;
-  text-decoration: none; display: block;
-  transition: border-color .25s, background .25s, transform .2s;
+  text-decoration: none; display: block; color: var(--cream);
+  box-shadow: var(--lip-out);
+  transition: border-color .25s, background .25s, transform .2s, box-shadow .25s ease;
 }
 .fp-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -237,9 +527,9 @@ body::before {
   transition: opacity .25s;
 }
 .fp-card:hover {
-  border-color: var(--border-lt);
-  background: var(--surface-2);
-  transform: translateY(-2px);
+  border-color: var(--accent-dim);
+  transform: translateY(-3px);
+  box-shadow: var(--lip-hover);
 }
 .fp-card:hover::after { opacity: .13; }
 .fp-card-num {
@@ -272,9 +562,11 @@ body::before {
   font-family: var(--font-serif);
   font-size: 12px; font-style: italic;
   color: var(--muted);
+  background: var(--pill-bg);
   border: 1px solid var(--border);
   border-radius: 20px; padding: 2px 10px;
-  transition: color .2s, border-color .2s;
+  box-shadow: var(--lip-out);
+  transition: color .2s, border-color .2s, box-shadow .2s ease;
 }
 .fp-card:hover .fp-word { color: var(--cream-dim); border-color: var(--border-lt); }
 .fp-card-status {
@@ -306,17 +598,18 @@ body::before {
   gap: 16px; margin-top: 16px;
 }
 .study-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 8px; padding: 28px 24px;
-  text-decoration: none; display: block;
-  transition: border-color .2s, background .2s, transform .15s;
+  background: var(--card-bg); border: 1px solid var(--glass-border);
+  border-radius: 12px; padding: 28px 24px;
+  text-decoration: none; display: block; color: var(--cream);
+  box-shadow: var(--lip-out);
+  transition: border-color .2s, background .2s, transform .15s, box-shadow .25s ease;
   position: relative; overflow: hidden;
 }
 .study-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
   background: var(--card-accent, var(--accent));
 }
-.study-card:hover { border-color: var(--border-lt); background: var(--surface-2); transform: translateY(-2px); }
+.study-card:hover { border-color: var(--accent-dim); transform: translateY(-3px); box-shadow: var(--lip-hover); }
 .study-card-eyebrow {
   font-family: var(--font-display);
   font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
@@ -743,6 +1036,27 @@ body::before {
 
 <!-- ═══════════════════════════════════ HERO -->
 <header class="lib-hero">
+  <div class="tt-wrap" id="ttWrap">
+    <span class="tt-glow-wide"></span>
+    <span class="tt-glow-mid"></span>
+    <span class="tt-glow-core"></span>
+    <button class="tt" id="tt" type="button" aria-label="Switch between dark and light theme" aria-pressed="false">
+      <span class="tt-track"></span>
+      <span class="tt-recess"></span>
+      <span class="tt-floor-glow"></span>
+      <span class="tt-rim"></span>
+      <span class="tt-knob">
+        <span class="tt-knob-spec"></span>
+        <span class="tt-icon tt-icon--moon tt-icon--visible" id="ttMoon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8a93b2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </span>
+        <span class="tt-icon tt-icon--sun" id="ttSun">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#a8761f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 1.6v2.4M12 20v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M1.6 12h2.4M20 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+        </span>
+      </span>
+    </button>
+    <span class="tt-shadow"></span>
+  </div>
   <div class="lib-eyebrow">Resource Library · 2026</div>
   <div class="lib-title">Bible Studies</div>
   <div class="lib-title-sub">A Growing Library</div>
@@ -1626,6 +1940,44 @@ function closeTOC() {
   document.getElementById('toc-panel').classList.remove('open');
   document.getElementById('toc-toggle').classList.remove('open');
 }
+
+/* ── THEME TOGGLE ───────────────────────────────────────
+   Two-stage press: the knob squashes down, the theme flips
+   mid-press while it's at the bottom, then it springs back
+   up already in the new theme. */
+(function () {
+  var wrap = document.getElementById('ttWrap');
+  var btn  = document.getElementById('tt');
+  var moon = document.getElementById('ttMoon');
+  var sun  = document.getElementById('ttSun');
+  if (!btn) return;
+
+  function currentTheme() {
+    return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  }
+
+  function paint(theme) {
+    var light = theme === 'light';
+    if (light) document.documentElement.setAttribute('data-theme', 'light');
+    else document.documentElement.removeAttribute('data-theme');
+    btn.classList.toggle('tt--light', light);
+    wrap.classList.toggle('tt-wrap--light', light);
+    btn.setAttribute('aria-pressed', String(light));
+    moon.classList.toggle('tt-icon--visible', !light);
+    sun.classList.toggle('tt-icon--visible', light);
+    try { localStorage.setItem('bsl-theme', theme); } catch (e) {}
+  }
+
+  paint(currentTheme());
+
+  btn.addEventListener('click', function () {
+    btn.classList.add('tt--pressed');
+    setTimeout(function () {
+      paint(currentTheme() === 'light' ? 'dark' : 'light');
+      setTimeout(function () { btn.classList.remove('tt--pressed'); }, 400);
+    }, 140);
+  });
+})();
 </script>
 
 </body>
