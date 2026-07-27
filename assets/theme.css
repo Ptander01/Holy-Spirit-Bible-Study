@@ -1,0 +1,397 @@
+/* ═══════════════════════════════════════════════════════════════
+   Bible Study Library — shared design system
+   ───────────────────────────────────────────────────────────────
+   Ported from the pauls-world / bible-timeline sister apps.
+
+   Load this BEFORE each page's own inline <style>, so a page's
+   :root can still set its own --accent for dark mode. All light
+   theme rules use html[data-theme="light"] (specificity 0,1,1)
+   so they win over a page's :root (0,1,0) regardless of order.
+
+   Each page sets --accent-base to its own accent hex, plus its
+   light-mode accent trio. Everything else lives here.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Neutral base — identical across every study page. Pages that
+     define these themselves simply restate the same values; pages
+     that don't (word-of-god.html) inherit them from here. */
+  --bg:           #0c0f18;
+  --surface:      #13182a;
+  --surface-2:    #1a2035;
+  --surface-3:    #212842;
+  /* A couple of pages spell these without the hyphen. */
+  --surface2:     #1a2035;
+  --surface3:     #212842;
+  /* Gold defaults — every page overrides these with its own accent.
+     Kept here so pages that never define --accent still render. */
+  --accent:       #c9a84c;
+  --accent-dim:   #7a6230;
+  --accent-lt:    #e8c46a;
+  --cream:        #ede8dc;
+  --cream-dim:    #a09a8e;
+  --muted:        #5c6078;
+  --border:       #232a42;
+  --border-lt:    #2e3858;
+  --warning-dim:  #6b2c2c;
+  --red-dim:      #6b2c2c;
+  --guide-bg:     #0d1a0d;
+  --guide-border: #1a3a1a;
+  --guide-accent: #4a8a4a;
+  --gold:         #c9a84c;
+  --gold-lt:      #e8c46a;
+  --gold-dim:     #7a6230;
+
+  --font-body:    'Lora', Georgia, serif;
+  --font-display: 'Cinzel', serif;
+  --font-serif:   'Cormorant Garamond', Georgia, serif;
+
+  /* ── Glass ── */
+  --glass-bg:     rgba(13, 16, 32, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-shine:  rgba(255, 255, 255, 0.06);
+  --glass-blur:   blur(18px);
+
+  /* Repeated surfaces get the glass *look* without backdrop-filter,
+     which is far too costly to composite once it repeats. Reserve
+     --glass-blur for a page's one or two large panels. */
+  --card-bg:      rgba(21, 26, 46, 0.72);
+
+  /* ── 3D "lip" system ──
+     --lip-out    : resting / lifted
+     --lip-hover  : transitional (more lift + accent rim glow)
+     --lip-in     : pressed (deep inset track)
+     --lip-in-gold: pressed + accent rim, for the selected state */
+  --lip-out:
+    0 6px 18px rgba(0,0,0,0.65),
+    0 2px 5px  rgba(0,0,0,0.45),
+    inset 0  1px 0 rgba(255,255,255,0.09),
+    inset 0 -1px 0 rgba(0,0,0,0.50),
+    inset 0  0   0 1px rgba(255,255,255,0.04);
+  --lip-hover:
+    0 8px 22px rgba(0,0,0,0.70),
+    0 3px 7px  rgba(0,0,0,0.50),
+    inset 0  1px 0 rgba(255,255,255,0.13),
+    inset 0 -1px 0 rgba(0,0,0,0.55),
+    inset 0  0   0 1px rgba(255,255,255,0.07),
+    0 0 14px rgba(201,168,76,0.12);
+  --lip-in:
+    inset 0  4px 14px rgba(0,0,0,0.90),
+    inset 0  2px  5px rgba(0,0,0,0.65),
+    inset 0 -1px  3px rgba(255,255,255,0.025),
+    inset 0  0    0 1px rgba(255,255,255,0.03);
+  --lip-in-gold:
+    inset 0  4px 14px rgba(0,0,0,0.90),
+    inset 0  2px  5px rgba(0,0,0,0.65),
+    inset 0 -1px  3px rgba(255,255,255,0.025),
+    inset 0  0    0 1px rgba(201,168,76,0.25),
+    0 0 18px rgba(201,168,76,0.20);
+
+  --pill-bg:        linear-gradient(160deg, #1c2138 0%, #141a2c 55%, #0f1422 100%);
+  --pill-bg-active: linear-gradient(160deg, #0a0c16 0%, #0e1222 55%, #141930 100%);
+
+  --noise-op: .5;
+}
+
+/* ═══════════ LIGHT / PARCHMENT THEME ═══════════
+   html[…] beats a page's :root, so load order doesn't matter. */
+html[data-theme="light"] {
+  --bg:           #f0e4c8;
+  --surface:      #e9dcb6;
+  --surface-2:    #e2d2a6;
+  --surface-3:    #dbc998;
+  --surface2:     #e2d2a6;
+  --surface3:     #dbc998;
+  --accent:       #7a5218;
+  --accent-dim:   #97723a;
+  --accent-lt:    #6b4712;
+  --cream:        #2a1808;
+  --cream-dim:    #5a3f24;
+  --muted:        #6f5940;
+  --border:       rgba(130, 85, 28, 0.20);
+  --border-lt:    rgba(130, 85, 28, 0.40);
+  --warning-dim:  #8a3a3a;
+  --red-dim:      #8a3a3a;
+  --guide-bg:     #dde8cd;
+  --guide-border: rgba(70, 110, 50, 0.35);
+  --guide-accent: #3f6b32;
+  --gold:         #7a5218;
+  --gold-lt:      #6b4712;
+  --gold-dim:     #97723a;
+
+  --glass-bg:     rgba(235, 220, 182, 0.80);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-shine:  rgba(255, 255, 255, 0.40);
+  --card-bg:      rgba(236, 223, 189, 0.88);
+
+  /* Warm clay neumorphism — same structure, tuned for a light bg */
+  --lip-out:
+    0 4px 14px rgba(110,70,20,0.20),
+    0 1px 4px  rgba(110,70,20,0.14),
+    inset 0  1px 0 rgba(255,255,255,0.72),
+    inset 0 -1px 0 rgba(110,70,20,0.18),
+    inset 0  0   0 1px rgba(255,255,255,0.28);
+  --lip-hover:
+    0 5px 18px rgba(110,70,20,0.24),
+    0 2px 6px  rgba(110,70,20,0.16),
+    inset 0  1px 0 rgba(255,255,255,0.82),
+    inset 0 -1px 0 rgba(110,70,20,0.22),
+    inset 0  0   0 1px rgba(255,255,255,0.38),
+    0 0 10px rgba(110,70,20,0.08);
+  --lip-in:
+    inset 0  3px 10px rgba(110,70,20,0.20),
+    inset 0  1px  4px rgba(110,70,20,0.14),
+    inset 0 -1px  2px rgba(255,255,255,0.65),
+    inset 0  0    0 1px rgba(255,255,255,0.22);
+  --lip-in-gold:
+    inset 0  3px 10px rgba(110,70,20,0.20),
+    inset 0  1px  4px rgba(110,70,20,0.14),
+    inset 0 -1px  2px rgba(255,255,255,0.65),
+    inset 0  0    0 1px rgba(130,85,28,0.35),
+    0 0 12px rgba(130,85,28,0.14);
+
+  --pill-bg:        linear-gradient(150deg, #ece0c0 0%, #e4d4a8 50%, #dccca0 100%);
+  --pill-bg-active: linear-gradient(150deg, #d8cca0 0%, #e4d4a8 50%, #ece0c0 100%);
+
+  --noise-op: .22;
+  color-scheme: light;
+}
+html { color-scheme: dark; }
+
+/* Page chrome that has to follow the theme. Pages hardcode a dark
+   gradient on .site-header and a dark body background, so both get
+   restated here for light mode. */
+html[data-theme="light"] body { background: var(--bg); color: var(--cream); }
+html[data-theme="light"] body::before { opacity: var(--noise-op); }
+html[data-theme="light"] .site-header,
+html[data-theme="light"] .top-bar {
+  background: linear-gradient(170deg, #f6ecd4 0%, #efe2c4 60%);
+  border-bottom-color: var(--border);
+}
+html[data-theme="light"] .tab-bar-wrap { background: var(--surface); }
+
+body, .site-header, .tab-bar-wrap, .verse-block, .callout,
+.reflection-card, .prayer-box, .tab-btn {
+  transition: background-color .5s ease, background .5s ease,
+              color .5s ease, border-color .5s ease, box-shadow .25s ease;
+}
+
+/* ═══════════ COMPONENTS ═══════════ */
+
+/* Segmented tab pills — the out → hover → in-accent three-state swap. */
+.tab-bar { gap: 6px; align-items: center; }
+.tab-btn {
+  border-radius: 13px;
+  background: var(--pill-bg);
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--lip-out);
+  padding: 9px 16px !important;
+  margin: 8px 0;
+  border-bottom-color: var(--border) !important;
+  transition: background .2s, color .18s, border-color .18s, box-shadow .18s ease;
+}
+.tab-btn:hover {
+  border-color: var(--accent-dim) !important;
+  color: var(--accent);
+  box-shadow: var(--lip-hover);
+}
+/* The compact pill is shorter than the original tab, so the "soon" corner
+   badge (originally `top: 10px`, tuned for a ~50px tab) needs re-centering
+   or it overlaps the label. Covers both class names used across pages. */
+.tab-btn.soon, .tab-btn.coming-soon {
+  padding-right: 34px !important;
+}
+.tab-btn.soon::after, .tab-btn.coming-soon::after {
+  top: 50% !important;
+  transform: translateY(-50%);
+  right: 8px !important;
+}
+.tab-btn.active {
+  background: var(--pill-bg-active);
+  border-color: var(--accent-dim) !important;
+  color: var(--accent);
+  box-shadow: var(--lip-in-gold);
+}
+
+/* Verse pull-quote — rounded on the open side, rim highlight. */
+.verse-block {
+  border-radius: 0 10px 10px 0;
+  box-shadow: var(--lip-out);
+}
+
+/* Callouts / reflection cards / prayer boxes — soft raised surfaces. */
+.callout, .reflection-card, .prayer-box {
+  border-radius: 10px;
+  box-shadow: var(--lip-out);
+}
+.reflection-card textarea {
+  border-radius: 8px;
+  box-shadow: var(--lip-in);
+  background: var(--surface);
+  color: var(--cream);
+  border: 1px solid var(--border);
+}
+.reflection-card textarea:focus {
+  outline: none;
+  border-color: var(--accent-dim);
+  box-shadow: var(--lip-in-gold);
+}
+
+/* Reference rows */
+.ref-item { border-radius: 8px; }
+
+/* ═══════════ THEME TOGGLE (3D capsule) ═══════════ */
+.tt-wrap {
+  /* Fixed to the viewport (not nested in a page's header) so it never
+     collides with a page's own header layout — several study pages have
+     their own top-right nav clusters — and stays reachable on scroll. */
+  position: fixed; top: 20px; right: 24px; z-index: 300;
+  perspective: 600px;
+}
+@media (max-width: 600px) { .tt-wrap { top: 12px; right: 12px; } }
+
+.tt-glow-wide, .tt-glow-mid, .tt-glow-core {
+  position: absolute; pointer-events: none;
+  border-radius: 50%; opacity: 0;
+  transition: opacity 1.2s ease;
+}
+.tt-wrap--light .tt-glow-wide,
+.tt-wrap--light .tt-glow-mid,
+.tt-wrap--light .tt-glow-core { opacity: 1; }
+.tt-glow-wide {
+  inset: -40px -50px;
+  background: radial-gradient(ellipse at 52% 50%, rgba(255,220,160,0.20) 0%, transparent 65%);
+  filter: blur(20px);
+}
+.tt-glow-mid {
+  inset: -18px -22px;
+  background: radial-gradient(ellipse at 52% 52%, rgba(255,228,170,0.30) 0%, transparent 60%);
+  filter: blur(10px);
+}
+.tt-glow-core {
+  inset: -4px -6px;
+  background: radial-gradient(ellipse at 52% 55%, rgba(255,236,190,0.38) 0%, transparent 65%);
+  filter: blur(4px);
+}
+
+.tt {
+  position: relative; display: block;
+  width: 58px; height: 26px;
+  background: none; border: none; padding: 0;
+  cursor: pointer;
+  transform: perspective(600px) rotateX(7deg);
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tt:hover    { transform: perspective(600px) rotateX(4deg) rotateY(-1deg) scale(1.04); }
+.tt--pressed { transform: perspective(600px) rotateX(1deg) scale(0.97) !important; }
+
+.tt-track {
+  position: absolute; inset: 0;
+  border-radius: 13px;
+  background: linear-gradient(150deg, #1e1e24 0%, #131317 40%, #0c0c0f 100%);
+  box-shadow:
+    inset 0 3px 10px rgba(0,0,0,0.85),
+    inset 0 -1px 3px rgba(255,255,255,0.025),
+    0 10px 36px rgba(0,0,0,0.7),
+    0 3px 8px rgba(0,0,0,0.45);
+  transition: background 0.8s ease, box-shadow 0.8s ease;
+}
+.tt--light .tt-track {
+  background: linear-gradient(150deg, #e8dcbf 0%, #ddd0a8 40%, #d0c298 100%);
+  box-shadow:
+    inset 0 2px 8px rgba(110,70,20,0.18),
+    inset 0 -3px 8px rgba(255,248,230,0.70),
+    0 10px 36px rgba(110,70,20,0.10),
+    0 3px 8px rgba(110,70,20,0.06),
+    0 0 60px rgba(255,220,150,0.08);
+}
+
+.tt-recess {
+  position: absolute; inset: 13% 4.5%;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #060608 0%, #0c0c10 50%, #090909 100%);
+  box-shadow: inset 0 4px 16px rgba(0,0,0,0.95), inset 0 -1px 3px rgba(255,255,255,0.01);
+  transition: background 0.8s ease, box-shadow 0.8s ease;
+}
+.tt--light .tt-recess {
+  background: linear-gradient(180deg, #a89060 0%, #b8a070 50%, #c8b080 100%);
+  box-shadow: inset 0 4px 16px rgba(80,50,10,0.30), inset 0 -2px 8px rgba(255,230,170,0.35);
+}
+
+.tt-floor-glow {
+  position: absolute; bottom: 9%; left: 8%; right: 8%; height: 10%;
+  border-radius: 4px; opacity: 0;
+  background: linear-gradient(90deg, transparent 3%, rgba(255,218,140,0.5) 25%, rgba(255,228,170,0.75) 50%, rgba(255,218,140,0.5) 75%, transparent 97%);
+  filter: blur(3px);
+  transition: opacity 0.9s ease;
+}
+.tt--light .tt-floor-glow { opacity: 0.65; }
+
+.tt-rim {
+  position: absolute; inset: 0;
+  border-radius: 13px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+  pointer-events: none;
+  transition: box-shadow 0.8s ease;
+}
+.tt--light .tt-rim { box-shadow: inset 0 0 0 1px rgba(255,245,220,0.30); }
+
+.tt-knob {
+  position: absolute; top: 13%; left: 5%; width: 42%; bottom: 13%;
+  border-radius: 8px;
+  background: linear-gradient(150deg, #303036 0%, #252428 35%, #1b1a1e 100%);
+  box-shadow:
+    0 6px 20px rgba(0,0,0,0.7),
+    0 2px 6px rgba(0,0,0,0.5),
+    inset 0 1px 3px rgba(255,255,255,0.045),
+    inset 0 -2px 4px rgba(0,0,0,0.4);
+  transition:
+    left 0.5s cubic-bezier(0.34, 1.3, 0.64, 1),
+    background 0.8s ease,
+    box-shadow 0.8s ease;
+}
+.tt--light .tt-knob {
+  left: 53%;
+  background: linear-gradient(150deg, #f5eddb 0%, #ede0c4 35%, #e4d4ae 100%);
+  box-shadow:
+    0 6px 22px rgba(110,70,20,0.18),
+    0 2px 7px rgba(110,70,20,0.12),
+    inset 0 3px 6px rgba(255,248,230,0.90),
+    inset 0 -2px 5px rgba(110,70,20,0.08),
+    0 0 30px rgba(255,218,140,0.08);
+}
+.tt--pressed .tt-knob { transform: translateY(1.5px); }
+
+.tt-knob-spec {
+  position: absolute; inset: 0;
+  border-radius: 8px; pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 40%, rgba(0,0,0,0.12) 100%);
+  transition: background 0.8s ease;
+}
+.tt--light .tt-knob-spec {
+  background: linear-gradient(135deg, rgba(255,252,242,0.72) 0%, transparent 40%, rgba(110,70,20,0.02) 100%);
+}
+
+.tt-icon {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transform: scale(0.4) rotate(120deg);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  pointer-events: none;
+}
+.tt-icon--visible { opacity: 1; transform: scale(1) rotate(0deg); }
+.tt-icon svg { width: 11px; height: 11px; display: block; }
+
+.tt-shadow {
+  position: absolute; bottom: -5px; left: 10%; right: 10%; height: 8px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  filter: blur(8px);
+  pointer-events: none; opacity: 0.6;
+  transition: opacity 0.8s ease, background 0.8s ease;
+}
+.tt-wrap--light .tt-shadow { background: rgba(100,65,20,0.12); opacity: 0.5; }
+
+@media print { .tt-wrap { display: none !important; } }
