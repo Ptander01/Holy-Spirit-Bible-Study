@@ -1,116 +1,124 @@
-# Holy Spirit — Interactive Bible Study
+# Bible Study Library
 
-A self-contained interactive reference app covering the Holy Spirit across the entire biblical canon. Built for a Friday morning Bible study group in Clemson, SC after 18 months of weekly study.
+**55 self-contained interactive Bible studies** across eight collections, each a
+single HTML file that opens in any browser with no server, no install and no
+login. Built out of years of weekly study with a Friday morning group in Clemson,
+SC — teaching notes, leadership discussions and journals turned into tools that
+serve the content rather than replacing it.
 
-**Open `holy-spirit-study.html` in any browser. No server, no install, no login required.**
+Every study is one file. Open it, and it works — offline, on a phone, from a USB
+stick, forwarded as an attachment. That constraint is the design.
 
----
+![The Bible Study Library index, showing the study collections](docs/hero.webp)
 
-## What It Is
+*Placeholder still. Filtering, the characteristic matrix and the cross-reference modals are all interactive — a demo GIF replaces this.*
 
-83 Spirit observations drawn from Genesis to Revelation, each tagged with ten theological characteristics and organized across five interactive tabs. Every passage card and scripture reference opens a deep dive modal with the ESV text, study commentary, theological reflection, and navigable cross-references.
-
-The content comes from 18 months of real group study — teaching notes, leadership discussions, personal journals, and serious engagement with the biblical text. The tool exists to serve that content.
-
----
-
-## The Five Tabs
-
-### 1 — Characteristic Matrix
-The complete reference table. Every observation laid out canonically with all ten characteristics mapped simultaneously as columns — Creator, Empowers, Guides, Reveals, Indwells, Convicts, Transforms, Unifies, Intercedes, Sovereign. Filter by testament, characteristic, or keyword. Toggle the Observations or Matrix columns independently to focus your reading.
-
-### 2 — Chronological Timeline
-Eight literary genres (Torah, History, Wisdom, Prophets, Gospels, Acts, Epistles, Apocalyptic) rendered side by side across the canon's arc. Each passage is a hoverable node with colored dots marking active characteristics. A frequency bar chart below shows OT vs NT distribution with a count/percentage toggle.
-
-### 3 — By Lens
-Four interpretive frames for the same 83 observations:
-- **OT vs NT** — the theological shift from *ruach* to *pneuma*, with an eight-dimension contrast table
-- **By Genre** — passages and dominant characteristics for each literary genre
-- **By Characteristic** — one thread pulled through the full canon at a time, split by testament
-- **Canon Map** — a density heatmap of all 66 books; click any book to expand its passages
-
-### 4 — Practical Application
-Nine questions the group returned to repeatedly, sequenced from the most foundational (*do I believe I am indwelt?*) to the most urgent (*what is at stake if the Spirit is absent?*). Each grounded in the passages studied, with clickable scripture references.
-
-### 5 — Study Notes
-Nine synthesized sections drawn from teaching notes, leadership discussions, and personal journals. The theological framework behind the data — what the Spirit is, why the distinctions matter, and how 18 months of study changed the way we read Scripture.
+**Live → [ptander01.github.io/Bible-Study-Library](https://ptander01.github.io/Bible-Study-Library/)**
 
 ---
 
-## Architecture
+## The collections
 
-**Single file delivery** — the entire app ships as one `.html` file. React 18 is loaded via CDN; everything else is self-contained. Open by double-clicking. Works offline once loaded.
+| Collection | Studies | What it covers |
+|---|---|---|
+| **Standalone** | 14 | Single-topic deep dives — Amos, fasting, identity in Christ, digital Babylon, anger and self-control, the character of God |
+| **First Principles** | 10 | Foundations — repentance, seeking God, counting the cost, Jesus is Lord, light and darkness |
+| **Leadership** | 7 | Studies through a life — Moses, Joshua, David, Peter, Paul, Jesus |
+| **Women's** | 6 | Identity and worth, anxiety and fear, comparison and contentment, Proverbs 31, the tongue, womanhood and calling |
+| **Resource Series** | 6 | Multi-week series guides — Colossians, Philippians, Ephesians, Word of God, Rooted and Established, and the Holy Spirit study |
+| **Listen** | 5 | Audio-companion formats for existing studies |
+| **Core Four** | 4 | Gospel, discipleship, disciplemaking, community |
+| **Stage of Life** | 3 | Marriage, discipling your children, discipline and formation |
 
-**Pre-compiled React** — JSX source is compiled with Babel CLI targeting Safari 12+ and injected into the HTML at build time. No Babel standalone runtime is used (it causes blank pages in Safari on large files).
-
-**Design system** — dark parchment aesthetic built on two typefaces (Cormorant Garamond for body, DM Mono for metadata and labels), a restrained token set, and characteristic colors as the primary visual encoding throughout. Sphere animations on matrix rows are triggered by `IntersectionObserver` as they enter the viewport.
-
-**Built with** — React 18, Babel CLI, vanilla CSS-in-JS, Python rebuild script, and iterative sessions with [Claude AI](https://claude.ai).
+`index.html` is the library front page and the way in.
 
 ---
 
-## Development
+## The flagship: the Holy Spirit study
 
-The JSX source lives separately from the compiled HTML. To make changes:
+`resource-series/holy-spirit-study_32.html` is the largest of them and the one the
+rest grew out of — **83 Spirit observations from Genesis to Revelation**, each
+tagged against ten theological characteristics (Creator, Empowers, Guides, Reveals,
+Indwells, Convicts, Transforms, Unifies, Intercedes, Sovereign) and presented
+across five interactive tabs. Every passage card and scripture reference opens a
+modal with the ESV text, study commentary, reflection, and navigable
+cross-references.
 
-```
-1. Edit    app.jsx                          ← source of truth
-2. Compile ./node_modules/.bin/babel app.jsx -o app.compiled.js
-3. Rebuild python3 rebuild.py              ← injects compiled JS into HTML
-4. Output  holy-spirit-study.html
-```
+It came out of eighteen months of weekly study. The tagging is the analytical part:
+ten characteristics mapped simultaneously as columns turns a list of proof-texts
+into something you can filter, sort and argue with — where the Spirit's work
+clusters by testament, which characteristics travel together, and which passages
+carry several at once.
 
-**Babel config** (`babel.config.json`):
-```json
-{
-  "presets": [
-    ["@babel/preset-env", { "targets": "Safari >= 12", "modules": false, "loose": true }],
-    ["@babel/preset-react", { "runtime": "classic" }]
-  ]
-}
+**The detail that would have made it wrong:** *the characteristics are a reading,
+not a taxonomy handed down.* They were derived from the group's own study and are
+one way of organising the material. The tool makes that reading inspectable rather
+than authoritative — you can see exactly which passages produced which tag.
+
+---
+
+## Quickstart
+
+There is no build and no dependency.
+
+```bash
+open index.html
 ```
 
-> **Note:** Do not use `type="text/babel"` in the HTML. Babel standalone cannot transpile files this large in Safari and will render a blank page.
+Or open any individual study file directly. Each carries its own CSS and
+JavaScript inline; `core.css` holds the shared design language for studies that
+reference it.
 
 ---
 
-## Content
+## Project layout
 
-The ten Spirit characteristics tracked across every passage:
-
-| Characteristic | Description |
-|---|---|
-| Creator | Spirit as agent of creation and life |
-| Empowers | Spirit enabling action, courage, skill |
-| Guides | Spirit directing movement and decision |
-| Reveals | Spirit disclosing truth and knowledge |
-| Indwells | Spirit dwelling within a person |
-| Convicts | Spirit bringing awareness of sin |
-| Transforms | Spirit changing character from within |
-| Unifies | Spirit binding community together |
-| Intercedes | Spirit praying on behalf of believers |
-| Sovereign | Spirit acting beyond human agency |
-
----
-
-## Theological Frameworks Preserved
-
-- *"The transformative is always miraculous, but the miraculous is not always transformative"*
-- Christopher Wright's two extremes: God in a box ←→ sensational / emotional / unrestrained
-- The freight engine / needle metaphor for Spirit through history
-- *"OT writers often attributed the unexplainable to the sovereignty of God"*
-- Realistic expectations: these are cumulative highlights across all of human history
+```
+index.html            the library front page
+core.css              shared design language
+core-four/            4 studies
+first-principles/     10
+leadership/           7
+listen/               5
+resource-series/      6, including holy-spirit-study_32.html
+stage-of-life/        3
+standalone/           14
+womens/               6
+assets/               shared images
+rebuild.py            SUPERSEDED — inlined app.compiled.js into a single-file
+                      build back when the Holy Spirit study lived at the root.
+                      Kept as build history; its paths no longer resolve.
+PROJECT_STATUS.md     session log
+```
 
 ---
 
-## Status
+## Why single files
 
-Active development. Ongoing additions include:
-- Additional verse deep dives
-- Remaining ROWS gaps (Gal 4:6, Rom 5:5, 2 Cor 1:21-22, Acts 16:6-7)
-- Global search across all tabs
-- Previous / next navigation within the deep dive modal
+Group study happens on phones, in church basements with bad wifi, and on borrowed
+laptops. A study that needs `npm install`, a dev server, or a login does not get
+used. Everything here is one file that can be emailed, sideloaded, opened offline
+and kept.
+
+The cost is duplication — shared logic is copied between studies rather than
+imported — and that is a deliberate trade. Fifty-five files that each work forever
+beat one framework that works until a dependency breaks.
 
 ---
 
-*Friday Morning Bible Study · Clemson, SC · Holy Spirit series · 18 months*
+## Limits
+
+**Interpretive content, not neutral reference.** These are study materials written
+from a particular tradition for a particular group. The scripture text is the ESV;
+the commentary, tagging and reflection are the authors' reading.
+
+**No search across the library.** Each study filters within itself; the index links
+out but does not index content. That is the main thing missing.
+
+**Duplication is real.** A design change means touching many files. See above —
+accepted knowingly, not overlooked.
+
+**`rebuild.py` no longer runs.** It refers to `holy-spirit-study.html` and
+`app.compiled.js` at the repository root, which moved when the library was
+reorganised. Marked rather than deleted, since it documents how the single-file
+build was originally produced.
